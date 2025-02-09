@@ -20,7 +20,7 @@ const generateToken = (user) => {
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(" ")[1];
+        const token = req.body.token || req.query.token;
         if (!token) {
             return res.status(401).json({ success: false, message: "Unauthorized: No token provided" });
         }

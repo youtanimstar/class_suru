@@ -3,8 +3,8 @@ import { signup, login, getUserDetails, verifyToken } from "../controllers/authC
 
 const router = express.Router();
 
-router.post("/signup", signup);  
-router.post("/login", login); 
-router.get("/user", verifyToken, getUserDetails);   
+router.post("/signup", signup);
+router.post("/login", login);
+router.get("/user/:id", verifyToken, getUserDetails);
 
 export default router;
