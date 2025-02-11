@@ -16,6 +16,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {jwtDecode} from 'jwt-decode';
 
 import axios from "axios";
+import { signupApi } from "../../apis";
+import { setUserId, setUserStatus } from "../../Redux/features/userSlice";
 
 const Register = () => {
   // Redux Hooks
@@ -60,34 +62,44 @@ const Register = () => {
       
 
       try{
-        const signup_response = await axios.post("http://localhost:5000/api/auth/signup",{
+        const reqBody = {
           username: name,
           email: email,
           phone_number: phone,
-          password: password
-          
-        })
+          password: password  
+        }
+        console.log(reqBody);
+
+        // const signup_response = reqBody;
+        
+        const signup_response = await axios.post(signupApi,reqBody);
   
         if(signup_response.status === 201){
+          
+          dispatch(setUserId(signup_response.data.userId));
+          dispatch(setUserStatus(true));
+
+          const token = signup_response.data.token;
+
+          localStorage.setItem("token",token);
+
           toast.dismiss(loadingToastId);
           toast.success("Signup Successful");
-          console.log(signup_response.data);
 
-          const data = jwtDecode(signup_response.data.token);
-
-          console.log("Decoed Token: ",data);
-          
-
-          
+          setTimeout(() => {
+            navigate("/dashboard");
+          }, 2000);
           
         }else{
           toast.dismiss(loadingToastId);
           toast.error("Signup Failed");
+
         }
 
       }catch(error){
         toast.dismiss(loadingToastId);
-        toast.error(`${error.response.data.message}`);
+        console.log(error);
+        toast.error(`Signup Failed`);
       }
 
     });
